@@ -1,1057 +1,1066 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Dashboard Clustering Kekerasan Jawa Barat</title>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- SheetJS -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
     <!-- Leaflet.js -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
-        :root {
-            --cluster0: #10b981;
-            --cluster1: #ef4444;
-            --primary: #1e293b;
-            --secondary: #64748b;
-            --accent: #3b82f6;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --border: #e2e8f0;
-            --border-focus: #3b82f6;
-            --success: #059669;
-            --warning: #d97706;
-            --error: #dc2626;
-            --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
+      :root {
+        --cluster0: #10b981;
+        --cluster1: #ef4444;
+        --primary: #1e293b;
+        --secondary: #64748b;
+        --accent: #3b82f6;
+        --bg: #f8fafc;
+        --card-bg: #ffffff;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --border: #e2e8f0;
+        --border-focus: #3b82f6;
+        --success: #059669;
+        --warning: #d97706;
+        --error: #dc2626;
+        --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
 
-        * {
-            box-sizing: border-box;
-        }
+      * {
+        box-sizing: border-box;
+      }
 
-        body {
-            background: var(--bg);
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            margin: 0;
-            color: var(--primary);
-            font-size: 14px;
-            line-height: 1.6;
-            font-weight: 400;
-        }
+      body {
+        background: var(--bg);
+        font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        margin: 0;
+        color: var(--primary);
+        font-size: 14px;
+        line-height: 1.6;
+        font-weight: 400;
+      }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 24px 16px;
-        }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px 16px;
+      }
 
-        h1 {
-            text-align: center;
-            background: var(--gradient-bg);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 800;
-            margin: 0 0 32px 0;
-            font-size: 2.5rem;
-            letter-spacing: -0.025em;
-            line-height: 1.2;
-        }
+      h1 {
+        text-align: center;
+        background: var(--gradient-bg);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 800;
+        margin: 0 0 32px 0;
+        font-size: 2.5rem;
+        letter-spacing: -0.025em;
+        line-height: 1.2;
+      }
 
-        .card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            box-shadow: var(--shadow);
-            padding: 24px;
-            margin-bottom: 24px;
-            border: 1px solid var(--border);
-            transition: all 0.3s ease;
-        }
+      .card {
+        background: var(--card-bg);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        padding: 24px;
+        margin-bottom: 24px;
+        border: 1px solid var(--border);
+        transition: all 0.3s ease;
+      }
 
-        .card:hover {
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-2px);
-        }
+      .card:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-2px);
+      }
 
-        .upload-bar {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 24px;
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-            border: 2px dashed var(--border);
-            transition: all 0.3s ease;
-        }
+      .upload-bar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        border: 2px dashed var(--border);
+        transition: all 0.3s ease;
+      }
 
-        .upload-bar:hover {
-            border-color: var(--accent);
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-        }
+      .upload-bar:hover {
+        border-color: var(--accent);
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      }
 
-        input[type="file"] {
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            padding: 12px 16px;
-            background: #ffffff;
-            font-size: 14px;
-            font-family: inherit;
-            font-weight: 500;
-            color: var(--primary);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
+      input[type="file"] {
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        padding: 12px 16px;
+        background: #ffffff;
+        font-size: 14px;
+        font-family: inherit;
+        font-weight: 500;
+        color: var(--primary);
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
 
-        input[type="file"]:hover {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
+      input[type="file"]:hover {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
 
-        input[type="file"]:focus {
-            outline: none;
-            border-color: var(--border-focus);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-        }
+      input[type="file"]:focus {
+        outline: none;
+        border-color: var(--border-focus);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+      }
 
-        .upload-bar label {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--primary);
-            font-family: inherit;
-        }
+      .upload-bar label {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--primary);
+        font-family: inherit;
+      }
 
-        .filters {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-bottom: 24px;
-        }
+      .filters {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 24px;
+      }
 
-        .filter-group {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-            transition: all 0.3s ease;
-        }
+      .filter-group {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        transition: all 0.3s ease;
+      }
 
-        .filter-group:hover {
-            box-shadow: var(--shadow);
-        }
+      .filter-group:hover {
+        box-shadow: var(--shadow);
+      }
 
-        .filter-group h4 {
-            margin: 0 0 16px 0;
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--primary);
-            font-family: inherit;
-        }
+      .filter-group h4 {
+        margin: 0 0 16px 0;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--primary);
+        font-family: inherit;
+      }
 
-        .filter-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 8px;
-            max-height: 180px;
-            overflow-y: auto;
-            padding-right: 8px;
-        }
+      .filter-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 8px;
+        max-height: 180px;
+        overflow-y: auto;
+        padding-right: 8px;
+      }
 
-        .filter-options::-webkit-scrollbar {
-            width: 6px;
-        }
+      .filter-options::-webkit-scrollbar {
+        width: 6px;
+      }
 
-        .filter-options::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 3px;
-        }
+      .filter-options::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 3px;
+      }
 
-        .filter-options::-webkit-scrollbar-thumb {
-            background: var(--secondary);
-            border-radius: 3px;
-        }
+      .filter-options::-webkit-scrollbar-thumb {
+        background: var(--secondary);
+        border-radius: 3px;
+      }
 
-        .filter-options::-webkit-scrollbar-thumb:hover {
-            background: var(--primary);
-        }
+      .filter-options::-webkit-scrollbar-thumb:hover {
+        background: var(--primary);
+      }
 
-        .filter-options label {
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-            color: var(--primary);
-            cursor: pointer;
-            padding: 8px 12px;
-            font-family: inherit;
-            font-weight: 500;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
+      .filter-options label {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        color: var(--primary);
+        cursor: pointer;
+        padding: 8px 12px;
+        font-family: inherit;
+        font-weight: 500;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+      }
 
-        .filter-options label:hover {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--accent);
-        }
+      .filter-options label:hover {
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--accent);
+      }
 
-        .filter-options input[type="checkbox"] {
-            margin-right: 8px;
-            cursor: pointer;
-            width: 16px;
-            height: 16px;
-            accent-color: var(--accent);
-        }
+      .filter-options input[type="checkbox"] {
+        margin-right: 8px;
+        cursor: pointer;
+        width: 16px;
+        height: 16px;
+        accent-color: var(--accent);
+      }
 
-        .select-all-btn {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: inherit;
-            cursor: pointer;
-            margin-bottom: 16px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
-        }
+      .select-all-btn {
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: inherit;
+        cursor: pointer;
+        margin-bottom: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+      }
 
-        .select-all-btn:hover {
-            background: #2563eb;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
-        }
+      .select-all-btn:hover {
+        background: #2563eb;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+      }
 
+      .dashboard-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 32px;
+        margin-bottom: 32px;
+      }
+
+      .chart-container {
+        min-height: 420px;
+        height: 420px;
+      }
+
+      .chart-container.compact {
+        min-height: 360px;
+        height: 360px;
+      }
+
+      .map-section {
+        margin-top: 16px;
+      }
+
+      .map-container {
+        min-height: 460px;
+        height: 460px;
+      }
+
+      #map {
+        width: 100%;
+        height: 420px;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+      }
+
+      .heatmap-container {
+        padding: 24px;
+        background: var(--card-bg);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        overflow-x: auto;
+        height: 420px;
+        overflow-y: auto;
+        border: 1px solid var(--border);
+        transition: all 0.3s ease;
+      }
+
+      .heatmap-container:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-2px);
+      }
+
+      .heatmap-container::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      .heatmap-container::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+      }
+
+      .heatmap-container::-webkit-scrollbar-thumb {
+        background: var(--secondary);
+        border-radius: 4px;
+      }
+
+      .heatmap-container::-webkit-scrollbar-thumb:hover {
+        background: var(--primary);
+      }
+
+      .heatmap-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 12px;
+        font-family: inherit;
+      }
+
+      table.heatmap {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 13px;
+        font-family: inherit;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+      }
+
+      table.heatmap th,
+      table.heatmap td {
+        border: 1px solid var(--border);
+        padding: 10px 12px;
+        text-align: center;
+        font-weight: 500;
+      }
+
+      table.heatmap th {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        color: var(--primary);
+        font-weight: 700;
+        font-family: inherit;
+        font-size: 14px;
+      }
+
+      .cluster-dot {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        margin-right: 8px;
+        vertical-align: -2px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .c0 {
+        background: var(--cluster0);
+      }
+      .c1 {
+        background: var(--cluster1);
+      }
+
+      .no-data {
+        text-align: center;
+        color: var(--secondary);
+        margin: 60px 0;
+        font-weight: 600;
+        font-size: 16px;
+        font-family: inherit;
+      }
+
+      .chart-subtitle {
+        font-size: 13px;
+        color: var(--secondary);
+        margin-bottom: 16px;
+        text-align: center;
+        font-style: normal;
+        line-height: 1.4;
+        font-family: inherit;
+        font-weight: 600;
+        padding: 0 12px;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 1050px) {
         .dashboard-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-gap: 32px;
-            margin-bottom: 32px;
+          grid-template-columns: 1fr;
+          grid-gap: 24px;
         }
-
-        .chart-container { 
-            min-height: 420px;
-            height: 420px;
+        .filters {
+          grid-template-columns: 1fr;
+          gap: 24px;
         }
-        
-        .chart-container.compact { 
-            min-height: 360px;
-            height: 360px;
+        .chart-container {
+          height: 380px;
+          min-height: 380px;
         }
-
-        .map-section {
-            margin-top: 16px;
+        .chart-container.compact {
+          height: 320px;
+          min-height: 320px;
         }
-
-        .map-container { 
-            min-height: 460px;
-            height: 460px;
-        }
-
-        #map {
-            width: 100%;
-            height: 420px;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-        }
-
         .heatmap-container {
-            padding: 24px;
-            background: var(--card-bg);
-            border-radius: 20px;
-            box-shadow: var(--shadow);
-            overflow-x: auto;
-            height: 420px;
-            overflow-y: auto;
-            border: 1px solid var(--border);
-            transition: all 0.3s ease;
+          height: 380px;
         }
-
-        .heatmap-container:hover {
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-2px);
+        .map-container {
+          height: 420px;
+          min-height: 420px;
         }
-
-        .heatmap-container::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+        #map {
+          height: 380px;
         }
+      }
 
-        .heatmap-container::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 4px;
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 2rem;
+          margin-bottom: 24px;
         }
-
-        .heatmap-container::-webkit-scrollbar-thumb {
-            background: var(--secondary);
-            border-radius: 4px;
+        .container {
+          padding: 16px 12px;
         }
-
-        .heatmap-container::-webkit-scrollbar-thumb:hover {
-            background: var(--primary);
+        .card,
+        .heatmap-container {
+          padding: 20px;
+          border-radius: 16px;
         }
-
-        .heatmap-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 12px;
-            font-family: inherit;
+        .chart-container {
+          height: 320px;
+          min-height: 320px;
         }
-
-        table.heatmap {
-            border-collapse: collapse;
-            width: 100%;
-            font-size: 13px;
-            font-family: inherit;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
+        .chart-container.compact {
+          height: 280px;
+          min-height: 280px;
         }
-
-        table.heatmap th, table.heatmap td {
-            border: 1px solid var(--border);
-            padding: 10px 12px;
-            text-align: center;
-            font-weight: 500;
+        .heatmap-container {
+          height: 320px;
         }
-
-        table.heatmap th {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            color: var(--primary);
-            font-weight: 700;
-            font-family: inherit;
-            font-size: 14px;
+        .map-container {
+          height: 360px;
+          min-height: 360px;
         }
-
-        .cluster-dot {
-            display: inline-block;
-            width: 14px; 
-            height: 14px;
-            border-radius: 50%;
-            margin-right: 8px;
-            vertical-align: -2px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        #map {
+          height: 320px;
         }
-
-        .c0 { background: var(--cluster0);}
-        .c1 { background: var(--cluster1);}
-
-        .no-data {
-            text-align: center;
-            color: var(--secondary);
-            margin: 60px 0;
-            font-weight: 600;
-            font-size: 16px;
-            font-family: inherit;
+        .dashboard-row {
+          grid-gap: 20px;
         }
-
-        .chart-subtitle {
-            font-size: 13px;
-            color: var(--secondary);
-            margin-bottom: 16px;
-            text-align: center;
-            font-style: normal;
-            line-height: 1.4;
-            font-family: inherit;
-            font-weight: 600;
-            padding: 0 12px;
+        .filters {
+          gap: 20px;
         }
-
-        /* Responsive Design */
-        @media (max-width: 1050px) {
-            .dashboard-row { 
-                grid-template-columns: 1fr; 
-                grid-gap: 24px; 
-            }
-            .filters {
-                grid-template-columns: 1fr;
-                gap: 24px;
-            }
-            .chart-container { 
-                height: 380px;
-                min-height: 380px;
-            }
-            .chart-container.compact { 
-                height: 320px;
-                min-height: 320px;
-            }
-            .heatmap-container {
-                height: 380px;
-            }
-            .map-container {
-                height: 420px;
-                min-height: 420px;
-            }
-            #map { 
-                height: 380px;
-            }
+        .filter-options {
+          grid-template-columns: 1fr;
         }
+      }
 
-        @media (max-width: 600px) {
-            h1 { 
-                font-size: 2rem;
-                margin-bottom: 24px;
-            }
-            .container { 
-                padding: 16px 12px;
-            }
-            .card, .heatmap-container { 
-                padding: 20px; 
-                border-radius: 16px;
-            }
-            .chart-container { 
-                height: 320px;
-                min-height: 320px;
-            }
-            .chart-container.compact { 
-                height: 280px;
-                min-height: 280px;
-            }
-            .heatmap-container {
-                height: 320px;
-            }
-            .map-container {
-                height: 360px;
-                min-height: 360px;
-            }
-            #map { 
-                height: 320px;
-            }
-            .dashboard-row {
-                grid-gap: 20px;
-            }
-            .filters {
-                gap: 20px;
-            }
-            .filter-options {
-                grid-template-columns: 1fr;
-            }
+      /* Loading Animation */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
         }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-        /* Loading Animation */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+      .card {
+        animation: fadeIn 0.6s ease-out;
+      }
 
-        .card {
-            animation: fadeIn 0.6s ease-out;
-        }
+      /* Focus states for accessibility */
+      .select-all-btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+      }
 
-        /* Focus states for accessibility */
-        .select-all-btn:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
-        }
-
-        input[type="checkbox"]:focus {
-            outline: 2px solid var(--accent);
-            outline-offset: 2px;
-        }
+      input[type="checkbox"]:focus {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
     </style>
-</head>
-<body>
-<div class="container">
-    <h1>Dashboard Clustering Kekerasan Jawa Barat</h1>
-    <div class="upload-bar card">
+  </head>
+  <body>
+    <div class="container">
+      <h1>Dashboard Clustering Kekerasan Jawa Barat</h1>
+      <div class="upload-bar card">
         <label for="upload">Upload File Excel (.xlsx):</label>
-        <input type="file" id="upload" accept=".xlsx"/>
-    </div>
-    <div class="filters card">
+        <input type="file" id="upload" accept=".xlsx" />
+      </div>
+      <div class="filters card">
         <div class="filter-group">
-            <h4>Wilayah</h4>
-            <button class="select-all-btn" onclick="toggleSelectAllWilayah()">Select All</button>
-            <div class="filter-options" id="filterWilayahOptions"></div>
+          <h4>Wilayah</h4>
+          <button class="select-all-btn" onclick="toggleSelectAllWilayah()">Select All</button>
+          <div class="filter-options" id="filterWilayahOptions"></div>
         </div>
         <div class="filter-group">
-            <h4>Tempat Kejadian</h4>
-            <button class="select-all-btn" onclick="toggleSelectAllTempat()">Select All</button>
-            <div class="filter-options" id="filterTempatKejadianOptions"></div>
+          <h4>Tempat Kejadian</h4>
+          <button class="select-all-btn" onclick="toggleSelectAllTempat()">Select All</button>
+          <div class="filter-options" id="filterTempatKejadianOptions"></div>
         </div>
-    </div>
-    <div class="dashboard-row">
+      </div>
+      <div class="dashboard-row">
         <div class="card chart-container">
-            <div class="chart-subtitle">Grafik batang menampilkan 10 wilayah dengan jumlah kasus kekerasan tertinggi</div>
-            <canvas id="barTop5"></canvas>
+          <div class="chart-subtitle">Grafik batang menampilkan 10 wilayah dengan jumlah kasus kekerasan tertinggi</div>
+          <canvas id="barTop5"></canvas>
         </div>
         <div class="card chart-container">
-            <div class="chart-subtitle">Diagram lingkaran menunjukkan persentase distribusi kasus berdasarkan tempat kejadian</div>
-            <canvas id="piePersentase"></canvas>
+          <div class="chart-subtitle">Diagram lingkaran menunjukkan persentase distribusi kasus berdasarkan tempat kejadian</div>
+          <canvas id="piePersentase"></canvas>
         </div>
-    </div>
-    <div class="dashboard-row">
+      </div>
+      <div class="dashboard-row">
         <div class="heatmap-container" id="heatmapTableBox">
-            <div class="chart-subtitle">Tabel perbandingan intensitas kasus antar wilayah dan tempat kejadian</div>
+          <div class="chart-subtitle">Tabel perbandingan intensitas kasus antar wilayah dan tempat kejadian</div>
         </div>
         <div class="card chart-container">
-            <div class="chart-subtitle">Grafik batang horizontal menampilkan distribusi kasus per kategori tempat kejadian</div>
-            <canvas id="chartTempatKejadian"></canvas>
+          <div class="chart-subtitle">Grafik batang horizontal menampilkan distribusi kasus per kategori tempat kejadian</div>
+          <canvas id="chartTempatKejadian"></canvas>
         </div>
-    </div>
-    <div class="map-section">
+      </div>
+      <div class="map-section">
         <div class="card map-container">
-            <div class="chart-subtitle">Peta interaktif menampilkan sebaran geografis dan clustering wilayah berdasarkan pola kekerasan</div>
-            <div id="map"></div>
+          <div class="chart-subtitle">Peta interaktif menampilkan sebaran geografis dan clustering wilayah berdasarkan pola kekerasan</div>
+          <div id="map"></div>
         </div>
+      </div>
     </div>
-</div>
-<script>
-// ========== DATA STATE ==========
-let clusterUmum = [], clusterKejadian0 = [], clusterKejadian1 = [];
-let wilayahList = [], tempatKejadianList = [];
-let map, mapMarkers = [];
-let barTop5Chart, piePersentaseChart, chartTempatKejadian;
-const clusterColors = {0: "#10b981", 1: "#ef4444"};
-// ========== EXCEL UPLOAD ==========
-document.getElementById('upload').addEventListener('change', function(e){
-    let file = e.target.files[0];
-    if (!file) return;
-    let reader = new FileReader();
-    reader.onload = function(ev) {
-        let data = new Uint8Array(ev.target.result);
-        let workbook = XLSX.read(data, {type:'array'});
-        clusterUmum = []; clusterKejadian0 = []; clusterKejadian1 = [];
-        console.log('Available sheets:', workbook.SheetNames);
+    <script>
+      // ========== DATA STATE ==========
+      let clusterUmum = [],
+        clusterKejadian0 = [],
+        clusterKejadian1 = [];
+      let wilayahList = [],
+        tempatKejadianList = [];
+      let map,
+        mapMarkers = [];
+      let barTop5Chart, piePersentaseChart, chartTempatKejadian;
+      const clusterColors = { 0: "#10b981", 1: "#ef4444" };
 
-        for(let sname of workbook.SheetNames){
-            console.log('Processing sheet:', sname);
-            if(sname.toLowerCase().includes('umum')) {
-                clusterUmum = XLSX.utils.sheet_to_json(workbook.Sheets[sname]);
-                console.log('Loaded clusterUmum:', clusterUmum.length, 'rows');
-            }
-            else if(sname.toLowerCase().includes('0') || sname.toLowerCase().includes('kejadian_0')) {
-                clusterKejadian0 = XLSX.utils.sheet_to_json(workbook.Sheets[sname]);
-                console.log('Loaded clusterKejadian0:', clusterKejadian0.length, 'rows');
-            }
-            else if(sname.toLowerCase().includes('1') || sname.toLowerCase().includes('kejadian_1')) {
-                clusterKejadian1 = XLSX.utils.sheet_to_json(workbook.Sheets[sname]);
-                console.log('Loaded clusterKejadian1:', clusterKejadian1.length, 'rows');
-            }
-        }
-        console.log('Data loaded:', {
-            clusterUmum: clusterUmum.length,
-            clusterKejadian0: clusterKejadian0.length,
-            clusterKejadian1: clusterKejadian1.length
-        });
-        console.log('Sample data:', {
-            umum: clusterUmum[0],
-            kejadian0: clusterKejadian0[0],
-            kejadian1: clusterKejadian1[0]
-        });
+      // ========== NORMALISASI TEMPAT KEJADIAN ==========
+      function normalizeTempatKejadian(nama) {
+        // Ganti _ dengan spasi, trim, dan uppercase semua
+        return (nama || "").replace(/_/g, " ").replace(/\s+/g, " ").trim().toUpperCase();
+      }
 
-        if(!clusterUmum.length || !clusterKejadian0.length || !clusterKejadian1.length){
-            alert('Sheet atau format data tidak ditemukan! Pastikan ada Cluster_Umum, Cluster_Tempat_Kejadian_0, dan Cluster_Tempat_Kejadian_1.');
+      // ========== KONVERSI CLUSTER UMUM KE LONG FORMAT ==========
+      function convertClusterUmumToLongFormat(data) {
+        if (!data.length) return [];
+        const exclude = ["nama_kabupaten_kota", "cluster", "latitude", "longitude"];
+        const tempatKejadianKeys = Object.keys(data[0]).filter((k) => !exclude.includes(k));
+        let result = [];
+        data.forEach((row) => {
+          tempatKejadianKeys.forEach((tempat) => {
+            let val = row[tempat];
+            if (val !== undefined && val !== null && val !== "" && !isNaN(val)) {
+              result.push({
+                nama_kabupaten_kota: row.nama_kabupaten_kota,
+                tempat_kejadian: normalizeTempatKejadian(tempat),
+                jumlah_kekerasan: parseInt(val),
+                cluster: row.cluster,
+                latitude: row.latitude,
+                longitude: row.longitude,
+              });
+            }
+          });
+        });
+        return result;
+      }
+
+      // ========== EXCEL UPLOAD ==========
+      document.getElementById("upload").addEventListener("change", function (e) {
+        let file = e.target.files[0];
+        if (!file) return;
+        let reader = new FileReader();
+        reader.onload = function (ev) {
+          let data = new Uint8Array(ev.target.result);
+          let workbook = XLSX.read(data, { type: "array" });
+          clusterUmum = [];
+          clusterKejadian0 = [];
+          clusterKejadian1 = [];
+          for (let sname of workbook.SheetNames) {
+            if (sname.toLowerCase().includes("umum")) {
+              let rawUmum = XLSX.utils.sheet_to_json(workbook.Sheets[sname]);
+              clusterUmum = convertClusterUmumToLongFormat(rawUmum);
+            } else if (sname.toLowerCase().includes("0") || sname.toLowerCase().includes("kejadian_0")) {
+              clusterKejadian0 = XLSX.utils.sheet_to_json(workbook.Sheets[sname]);
+              clusterKejadian0.forEach((d) => {
+                if (d.tempat_kejadian) d.tempat_kejadian = normalizeTempatKejadian(d.tempat_kejadian);
+              });
+            } else if (sname.toLowerCase().includes("1") || sname.toLowerCase().includes("kejadian_1")) {
+              clusterKejadian1 = XLSX.utils.sheet_to_json(workbook.Sheets[sname]);
+              clusterKejadian1.forEach((d) => {
+                if (d.tempat_kejadian) d.tempat_kejadian = normalizeTempatKejadian(d.tempat_kejadian);
+              });
+            }
+          }
+          if (!clusterUmum.length || !clusterKejadian0.length || !clusterKejadian1.length) {
+            alert("Sheet atau format data tidak ditemukan! Pastikan ada Cluster_Umum, Cluster_Tempat_Kejadian_0, dan Cluster_Tempat_Kejadian_1.");
             return;
-        }
-        buildFilters();
+          }
+          buildFilters();
+          renderAll();
+          if (!map) initMap();
+          else renderMap();
+        };
+        reader.readAsArrayBuffer(file);
+      });
+
+      // ========== FILTERS ==========
+      function buildFilters() {
+        let wilayahSet = new Set(clusterUmum.map((d) => d.nama_kabupaten_kota));
+        wilayahList = Array.from(wilayahSet).sort();
+
+        let wilayahContainer = document.getElementById("filterWilayahOptions");
+        wilayahContainer.innerHTML = "";
+        wilayahList.forEach((w) => {
+          let label = document.createElement("label");
+          let checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.value = w;
+          checkbox.checked = true;
+          checkbox.onchange = renderAll;
+          label.appendChild(checkbox);
+          label.appendChild(document.createTextNode(w));
+          wilayahContainer.appendChild(label);
+        });
+
+        // Ambil tempat kejadian dari clusterUmum + clusterKejadian0 + clusterKejadian1, sudah dinormalisasi
+        let tempSet = new Set();
+        clusterUmum.forEach((d) => tempSet.add(d.tempat_kejadian));
+        clusterKejadian0.concat(clusterKejadian1).forEach((d) => tempSet.add(d.tempat_kejadian));
+        tempatKejadianList = Array.from(tempSet).sort();
+
+        let tempatContainer = document.getElementById("filterTempatKejadianOptions");
+        tempatContainer.innerHTML = "";
+        tempatKejadianList.forEach((t) => {
+          let label = document.createElement("label");
+          let checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.value = t;
+          checkbox.checked = true;
+          checkbox.onchange = renderAll;
+          label.appendChild(checkbox);
+          // Label tampilkan dengan kapitalisasi awal kata
+          label.appendChild(
+            document.createTextNode(
+              t
+                .split(" ")
+                .map((w) => w.charAt(0) + w.slice(1).toLowerCase())
+                .join(" ")
+            )
+          );
+          tempatContainer.appendChild(label);
+        });
+      }
+
+      function toggleSelectAllWilayah() {
+        let checkboxes = document.querySelectorAll('#filterWilayahOptions input[type="checkbox"]');
+        let allChecked = Array.from(checkboxes).every((cb) => cb.checked);
+        checkboxes.forEach((cb) => (cb.checked = !allChecked));
         renderAll();
-        if (!map) initMap();
-        else renderMap();
-    };
-    reader.readAsArrayBuffer(file);
-});
-// ========== FILTERS ==========
-function buildFilters(){
-    let wilayahSet = new Set(clusterUmum.map(d=>d.nama_kabupaten_kota));
-    wilayahList = Array.from(wilayahSet).sort();
+      }
 
-    let wilayahContainer = document.getElementById('filterWilayahOptions');
-    wilayahContainer.innerHTML = '';
-    wilayahList.forEach(w=>{
-        let label = document.createElement('label');
-        let checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.value = w;
-        checkbox.checked = true;
-        checkbox.onchange = renderAll;
-        label.appendChild(checkbox);
-        label.appendChild(document.createTextNode(w));
-        wilayahContainer.appendChild(label);
-    });
+      function toggleSelectAllTempat() {
+        let checkboxes = document.querySelectorAll('#filterTempatKejadianOptions input[type="checkbox"]');
+        let allChecked = Array.from(checkboxes).every((cb) => cb.checked);
+        checkboxes.forEach((cb) => (cb.checked = !allChecked));
+        renderAll();
+      }
+      function getClusterWilayahDict() {
+        let dict = {};
+        clusterUmum.forEach((d) => {
+          if (d.nama_kabupaten_kota && d.cluster !== undefined) {
+            dict[d.nama_kabupaten_kota] = parseInt(d.cluster);
+          }
+        });
+        return dict;
+      }
+      // ========== FILTERED DATA ==========
+      function getSelectedWilayah() {
+        let checkboxes = document.querySelectorAll('#filterWilayahOptions input[type="checkbox"]:checked');
+        return Array.from(checkboxes).map((cb) => cb.value);
+      }
 
-    let tempSet = new Set();
-    clusterKejadian0.concat(clusterKejadian1).forEach(d=>tempSet.add(d.tempat_kejadian));
-    tempatKejadianList = Array.from(tempSet).sort();
+      function getSelectedTempatKejadian() {
+        let checkboxes = document.querySelectorAll('#filterTempatKejadianOptions input[type="checkbox"]:checked');
+        return Array.from(checkboxes).map((cb) => cb.value);
+      }
 
-    let tempatContainer = document.getElementById('filterTempatKejadianOptions');
-    tempatContainer.innerHTML = '';
-    tempatKejadianList.forEach(t=>{
-        let label = document.createElement('label');
-        let checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.value = t;
-        checkbox.checked = true;
-        checkbox.onchange = renderAll;
-        label.appendChild(checkbox);
-        label.appendChild(document.createTextNode(t));
-        tempatContainer.appendChild(label);
-    });
-}
+      // Fungsi utama filter data visualisasi
+      function getFilteredDataForVisual() {
+        let selectedWilayah = getSelectedWilayah();
+        let selectedTempat = getSelectedTempatKejadian();
 
-function toggleSelectAllWilayah(){
-    let checkboxes = document.querySelectorAll('#filterWilayahOptions input[type="checkbox"]');
-    let allChecked = Array.from(checkboxes).every(cb => cb.checked);
-    checkboxes.forEach(cb => cb.checked = !allChecked);
-    renderAll();
-}
-
-function toggleSelectAllTempat(){
-    let checkboxes = document.querySelectorAll('#filterTempatKejadianOptions input[type="checkbox"]');
-    let allChecked = Array.from(checkboxes).every(cb => cb.checked);
-    checkboxes.forEach(cb => cb.checked = !allChecked);
-    renderAll();
-}
-function getClusterWilayahDict(){
-    let dict = {};
-    clusterUmum.forEach(d=>{
-        if(d.nama_kabupaten_kota && d.cluster !== undefined) {
-            dict[d.nama_kabupaten_kota]=parseInt(d.cluster);
+        if (selectedTempat.length === 1) {
+          // Satu tempat kejadian: ambil dari clusterKejadian0/1
+          let data = clusterKejadian0.concat(clusterKejadian1);
+          data = data.filter((d) => d.tempat_kejadian === selectedTempat[0]);
+          if (selectedWilayah.length > 0) {
+            data = data.filter((d) => selectedWilayah.includes(d.nama_kabupaten_kota));
+          }
+          return data;
+        } else {
+          // Lebih dari satu: ambil dari clusterUmum (long format)
+          let data = clusterUmum;
+          if (selectedWilayah.length > 0) {
+            data = data.filter((d) => selectedWilayah.includes(d.nama_kabupaten_kota));
+          }
+          if (selectedTempat.length > 0) {
+            data = data.filter((d) => selectedTempat.includes(d.tempat_kejadian));
+          }
+          return data;
         }
-    });
-    console.log('Cluster wilayah mapping:', dict);
-    return dict;
-}
-// ========== FILTERED DATA ==========
-function getSelectedWilayah(){
-    let checkboxes = document.querySelectorAll('#filterWilayahOptions input[type="checkbox"]:checked');
-    return Array.from(checkboxes).map(cb => cb.value);
-}
+      }
 
-function getSelectedTempatKejadian(){
-    let checkboxes = document.querySelectorAll('#filterTempatKejadianOptions input[type="checkbox"]:checked');
-    return Array.from(checkboxes).map(cb => cb.value);
-}
+      // ========== RENDER ALL ==========
+      function renderAll() {
+        renderBarTop5();
+        renderPiePersentase();
+        renderHeatmap();
+        renderChartTempatKejadian();
+        renderMap();
+      }
 
-function getFilteredDataClusterKejadian(){
-    let selectedWilayah = getSelectedWilayah();
-    let selectedTempat = getSelectedTempatKejadian();
-    let dataAll = clusterKejadian0.concat(clusterKejadian1);
+      // ========== BAR CHART TOP 5 WILAYAH ==========
+      function renderBarTop5() {
+        const ctx = document.getElementById("barTop5").getContext("2d");
+        let dataAll = getFilteredDataForVisual();
 
-    if(selectedWilayah.length > 0) {
-        dataAll = dataAll.filter(d => selectedWilayah.includes(d.nama_kabupaten_kota));
-    }
-    if(selectedTempat.length > 0) {
-        dataAll = dataAll.filter(d => selectedTempat.includes(d.tempat_kejadian));
-    }
-    return dataAll;
-}
+        // Agregasi data per wilayah dan simpan cluster
+        let agg = {};
+        let clusterPerWilayah = {};
+        dataAll.forEach((d) => {
+          let w = d.nama_kabupaten_kota;
+          agg[w] = (agg[w] || 0) + parseInt(d.jumlah_kekerasan || 0);
+          // Simpan cluster terakhir (atau pertama) untuk wilayah tsb
+          if (d.cluster !== undefined) clusterPerWilayah[w] = parseInt(d.cluster);
+        });
 
-function getFilteredDataClusterUmum(){
-    let selectedWilayah = getSelectedWilayah();
-    if(selectedWilayah.length === 0) return clusterUmum;
-    return clusterUmum.filter(d => selectedWilayah.includes(d.nama_kabupaten_kota));
-}
-// ========== RENDER ALL ==========
-function renderAll(){
-    renderBarTop5();
-    renderPiePersentase();
-    renderHeatmap();
-    renderChartTempatKejadian();
-    renderMap();
-}
-// ========== BAR CHART TOP 5 WILAYAH ==========
-function renderBarTop5(){
-    const ctx = document.getElementById('barTop5').getContext('2d');
-    let selectedWilayah = getSelectedWilayah();
-    let selectedTempat = getSelectedTempatKejadian();
-    let dataAll = clusterKejadian0.concat(clusterKejadian1);
-    let clusterWilayahDict = getClusterWilayahDict();
+        let sorted = Object.entries(agg)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10);
+        let labels = sorted.map((x) => x[0]);
+        let values = sorted.map((x) => x[1]);
+        let colors = labels.map((w) => (clusterPerWilayah[w] === 1 ? "#ef4444" : "#10b981"));
 
-    // Filter data berdasarkan pilihan
-    if(selectedWilayah.length > 0) {
-        dataAll = dataAll.filter(d => selectedWilayah.includes(d.nama_kabupaten_kota));
-    }
-    if(selectedTempat.length > 0) {
-        dataAll = dataAll.filter(d => selectedTempat.includes(d.tempat_kejadian));
-    }
-
-    // Agregasi data per wilayah
-    let agg = {};
-    dataAll.forEach(d=>{
-        let w = d.nama_kabupaten_kota;
-        agg[w] = (agg[w]||0) + parseInt(d.jumlah_kekerasan||0);
-    });
-
-    let sorted = Object.entries(agg).sort((a,b)=>b[1]-a[1]).slice(0,10);
-    let labels = sorted.map(x=>x[0]);
-    let values = sorted.map(x=>x[1]);
-    let colors = labels.map(w=>clusterColors[clusterWilayahDict[w]||0]);
-
-    if(barTop5Chart) barTop5Chart.destroy();
-    barTop5Chart = new Chart(ctx, {
-        type: 'bar',
-        data: { labels, datasets:[{label:'Jumlah Kasus',data:values,backgroundColor:colors}] },
-        options: {
+        if (barTop5Chart) barTop5Chart.destroy();
+        barTop5Chart = new Chart(ctx, {
+          type: "bar",
+          data: { labels, datasets: [{ label: "Jumlah Kasus", data: values, backgroundColor: colors }] },
+          options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins:{
-                legend:{display:false}
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: "#e2e8f0" } },
+              x: { grid: { display: false }, ticks: { maxRotation: 45, minRotation: 0 } },
             },
-            scales:{ 
-                y:{ 
-                    beginAtZero:true, 
-                    ticks:{precision:0},
-                    grid: {
-                        color: '#e2e8f0'
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        maxRotation: 45,
-                        minRotation: 0
-                    }
-                }
-            },
-            layout: {
-                padding: {
-                    left: 5,
-                    right: 5,
-                    top: 10,
-                    bottom: 5
-                }
-            }
-        }
-    });
-}
-// ========== PIE CHART PERSENTASE TEMPAT KEJADIAN ==========
-function renderPiePersentase(){
-    const ctx = document.getElementById('piePersentase').getContext('2d');
-    let selectedWilayah = getSelectedWilayah();
-    let selectedTempat = getSelectedTempatKejadian();
-    let data = clusterKejadian0.concat(clusterKejadian1);
+            layout: { padding: { left: 5, right: 5, top: 10, bottom: 5 } },
+          },
+        });
+      }
 
-    // Filter berdasarkan pilihan
-    if(selectedWilayah.length > 0) {
-        data = data.filter(d => selectedWilayah.includes(d.nama_kabupaten_kota));
-    }
-    if(selectedTempat.length > 0) {
-        data = data.filter(d => selectedTempat.includes(d.tempat_kejadian));
-    }
+      // ========== PIE CHART PERSENTASE TEMPAT KEJADIAN ==========
+      function renderPiePersentase() {
+        const ctx = document.getElementById("piePersentase").getContext("2d");
+        let data = getFilteredDataForVisual();
 
-    // Tampilkan distribusi tempat kejadian
-    let agg = {};
-    data.forEach(d=>{
-        let t = d.tempat_kejadian;
-        agg[t] = (agg[t]||0) + parseInt(d.jumlah_kekerasan||0);
-    });
+        // Tampilkan distribusi tempat kejadian
+        let agg = {};
+        data.forEach((d) => {
+          let t = d.tempat_kejadian;
+          agg[t] = (agg[t] || 0) + parseInt(d.jumlah_kekerasan || 0);
+        });
 
-    let labels = Object.keys(agg);
-    let values = Object.values(agg);
-    let total = values.reduce((a,b)=>a+b,0);
+        let labels = Object.keys(agg);
+        let values = Object.values(agg);
+        let total = values.reduce((a, b) => a + b, 0);
 
-    // Warna yang berbeda untuk setiap tempat kejadian
-    let colors = ['#3b82f6','#ef4444','#f59e0b','#8b5cf6','#10b981','#6b7280','#84cc16'];
+        // Warna yang berbeda untuk setiap tempat kejadian
+        let colors = ["#3b82f6", "#ef4444", "#f59e0b", "#8b5cf6", "#10b981", "#6b7280", "#84cc16"];
 
-    if(piePersentaseChart) piePersentaseChart.destroy();
-    piePersentaseChart = new Chart(ctx, {
-        type: 'pie',
-        data: { 
-            labels, 
-            datasets:[{
-                data:values,
-                backgroundColor:colors.slice(0,labels.length),
-                borderWidth: 2,
-                borderColor: '#ffffff'
-            }] 
-        },
-        options: {
-            responsive:true,
-            plugins:{ 
-                legend:{
-                    display:true,
-                    position: 'bottom',
-                    align: 'center',
-                    labels: {
-                        boxWidth: 8,
-                        padding: 4,
-                        font: {
-                            size: 9,
-                            weight: '500'
-                        },
-                        color: '#1e293b'
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            let value = context.parsed;
-                            let percentage = ((value/total)*100).toFixed(1);
-                            return context.label + ': ' + value + ' (' + percentage + '%)';
-                        }
-                    }
-                }
-            },
-            layout: {
-                padding: {
-                    top: 25,
-                    bottom: 35,
-                    left: 25,
-                    right: 25
-                }
-            },
-            maintainAspectRatio: false
-        }
-    });
-}
-// ========== CHART TEMPAT KEJADIAN ==========
-function renderChartTempatKejadian(){
-    const ctx = document.getElementById('chartTempatKejadian').getContext('2d');
-    let selectedWilayah = getSelectedWilayah();
-    let selectedTempat = getSelectedTempatKejadian();
-    let data = clusterKejadian0.concat(clusterKejadian1);
-
-    // Filter berdasarkan pilihan
-    if(selectedWilayah.length > 0) {
-        data = data.filter(d => selectedWilayah.includes(d.nama_kabupaten_kota));
-    }
-    if(selectedTempat.length > 0) {
-        data = data.filter(d => selectedTempat.includes(d.tempat_kejadian));
-    }
-
-    // Tampilkan distribusi tempat kejadian (seperti pie chart)
-    let agg = {};
-    data.forEach(d=>{
-        let t = d.tempat_kejadian;
-        agg[t] = (agg[t]||0) + parseInt(d.jumlah_kekerasan||0);
-    });
-
-    let labels = Object.keys(agg);
-    let values = Object.values(agg);
-
-    // Warna yang berbeda untuk setiap tempat kejadian
-    let colors = ['#3b82f6','#ef4444','#f59e0b','#8b5cf6','#10b981','#6b7280','#84cc16'];
-
-    if(chartTempatKejadian) chartTempatKejadian.destroy();
-    chartTempatKejadian = new Chart(ctx, {
-        type: 'bar',
-        data: { 
-            labels, 
-            datasets:[{
-                label: 'Jumlah Kasus',
+        if (piePersentaseChart) piePersentaseChart.destroy();
+        piePersentaseChart = new Chart(ctx, {
+          type: "pie",
+          data: {
+            labels,
+            datasets: [
+              {
                 data: values,
-                backgroundColor: colors.slice(0,labels.length),
-                borderColor: colors.slice(0,labels.length),
+                backgroundColor: colors.slice(0, labels.length),
                 borderWidth: 2,
-                borderRadius: 4
-            }] 
-        },
-        options: {
+                borderColor: "#ffffff",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                display: true,
+                position: "bottom",
+                align: "center",
+                labels: {
+                  boxWidth: 8,
+                  padding: 4,
+                  font: {
+                    size: 9,
+                    weight: "500",
+                  },
+                  color: "#1e293b",
+                },
+              },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    let value = context.parsed;
+                    let percentage = ((value / total) * 100).toFixed(1);
+                    return context.label + ": " + value + " (" + percentage + "%)";
+                  },
+                },
+              },
+            },
+            layout: {
+              padding: {
+                top: 25,
+                bottom: 35,
+                left: 25,
+                right: 25,
+              },
+            },
+            maintainAspectRatio: false,
+          },
+        });
+      }
+
+      // ========== CHART TEMPAT KEJADIAN ==========
+      function renderChartTempatKejadian() {
+        const ctx = document.getElementById("chartTempatKejadian").getContext("2d");
+        let data = getFilteredDataForVisual();
+
+        // Tampilkan distribusi tempat kejadian (seperti pie chart)
+        let agg = {};
+        data.forEach((d) => {
+          let t = d.tempat_kejadian;
+          agg[t] = (agg[t] || 0) + parseInt(d.jumlah_kekerasan || 0);
+        });
+
+        let labels = Object.keys(agg);
+        let values = Object.values(agg);
+
+        // Warna yang berbeda untuk setiap tempat kejadian
+        let colors = ["#3b82f6", "#ef4444", "#f59e0b", "#8b5cf6", "#10b981", "#6b7280", "#84cc16"];
+
+        if (chartTempatKejadian) chartTempatKejadian.destroy();
+        chartTempatKejadian = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "Jumlah Kasus",
+                data: values,
+                backgroundColor: colors.slice(0, labels.length),
+                borderColor: colors.slice(0, labels.length),
+                borderWidth: 2,
+                borderRadius: 4,
+              },
+            ],
+          },
+          options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins:{
-                legend:{display:false}
+            plugins: {
+              legend: { display: false },
             },
             scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        precision: 0,
-                        color: '#64748b',
-                        font: {
-                            size: 10
-                        }
-                    },
-                    grid: {
-                        color: '#e2e8f0'
-                    }
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  precision: 0,
+                  color: "#64748b",
+                  font: {
+                    size: 10,
+                  },
                 },
-                x: {
-                    ticks: {
-                        maxRotation: 45,
-                        minRotation: 45,
-                        color: '#64748b',
-                        font: {
-                            size: 6,
-                            weight: '500'
-                        }
-                    },
-                    grid: {
-                        display: false
-                    }
-                }
+                grid: {
+                  color: "#e2e8f0",
+                },
+              },
+              x: {
+                ticks: {
+                  maxRotation: 45,
+                  minRotation: 45,
+                  color: "#64748b",
+                  font: {
+                    size: 6,
+                    weight: "500",
+                  },
+                },
+                grid: {
+                  display: false,
+                },
+              },
             },
             layout: {
-                padding: {
-                    left: 15,
-                    right: 15,
-                    top: 15,
-                    bottom: 35
-                }
-            }
-        }
-    });
-}
-// ========== HEATMAP ==========
-function renderHeatmap(){
-    let selectedWilayah = getSelectedWilayah();
-    let selectedTempat = getSelectedTempatKejadian();
-    let data = clusterKejadian0.concat(clusterKejadian1);
+              padding: {
+                left: 15,
+                right: 15,
+                top: 15,
+                bottom: 35,
+              },
+            },
+          },
+        });
+      }
 
-    // Dapatkan wilayah yang akan ditampilkan
-    let wilayahArr = selectedWilayah.length > 0 ? selectedWilayah : [...new Set(clusterUmum.map(d=>d.nama_kabupaten_kota))];
+      // ========== HEATMAP ==========
+      function renderHeatmap() {
+        let data = getFilteredDataForVisual();
 
-    // Dapatkan tempat kejadian yang akan ditampilkan
-    let tempatKejadianArr = selectedTempat.length > 0 ? selectedTempat : [...new Set(data.map(d => d.tempat_kejadian))];
+        // Dapatkan wilayah yang akan ditampilkan
+        let wilayahArr = [...new Set(data.map((d) => d.nama_kabupaten_kota))];
 
-    // Buat matrix: wilayah x tempat kejadian
-    let matrix = {};
-    let vmax = 0;
+        // Dapatkan tempat kejadian yang akan ditampilkan
+        let tempatKejadianArr = [...new Set(data.map((d) => d.tempat_kejadian))];
 
-    wilayahArr.forEach(w => {
-        matrix[w] = {};
-        tempatKejadianArr.forEach(t => {
-            let sum = data.filter(d => d.nama_kabupaten_kota === w && d.tempat_kejadian === t)
-                .reduce((a,b) => a + parseInt(b.jumlah_kekerasan || 0), 0);
+        // Buat matrix: wilayah x tempat kejadian dan simpan cluster per wilayah
+        let matrix = {};
+        let clusterPerWilayah = {};
+        let vmax = 0;
+
+        wilayahArr.forEach((w) => {
+          matrix[w] = {};
+          // Ambil cluster dari data pertama wilayah tsb
+          let dWil = data.find((d) => d.nama_kabupaten_kota === w);
+          clusterPerWilayah[w] = dWil && dWil.cluster !== undefined ? parseInt(dWil.cluster) : 0;
+          tempatKejadianArr.forEach((t) => {
+            let sum = data.filter((d) => d.nama_kabupaten_kota === w && d.tempat_kejadian === t).reduce((a, b) => a + parseInt(b.jumlah_kekerasan || 0), 0);
             matrix[w][t] = sum;
             vmax = Math.max(vmax, sum);
+          });
         });
-    });
 
-    // Render tabel
-    let box = document.getElementById('heatmapTableBox');
-    let titleText = "Heatmap Perbandingan Kasus per Wilayah dan Tempat Kejadian";
-    if(selectedWilayah.length > 0 && selectedWilayah.length <= 3) {
-        titleText = `Heatmap Kasus di ${selectedWilayah.join(', ')}`;
-    }
-    if(selectedTempat.length > 0 && selectedTempat.length <= 3) {
-        titleText = `Heatmap ${selectedTempat.join(', ')}`;
-    }
-
-    let html = `<div class="heatmap-title">${titleText}</div>`;
-
-    // Header tabel
-    html += '<table class="heatmap"><tr><th>Wilayah</th>';
-    tempatKejadianArr.forEach(t => {
-        html += `<th>${t}</th>`;
-    });
-    html += '</tr>';
-
-    // Baris data
-    wilayahArr.forEach(w => {
-        let cval = getClusterWilayahDict()[w] || 0;
-        html += `<tr><th style="text-align:left"><span class="cluster-dot c${cval}"></span>${w}</th>`;
-        tempatKejadianArr.forEach(t => {
-            let val = matrix[w][t];
-            html += `<td style="background:${heatColor(val,vmax,cval)};color:${val>vmax*0.6?'#fff':'#111'}">${val}</td>`;
-        });
-        html += '</tr>';
-    });
-
-    html += '</table>';
-    box.innerHTML = html;
-}
-// Pewarnaan heatmap: cluster 0 hijau, cluster 1 merah, intensitas sesuai jumlah kasus
-function heatColor(val,max,cluster){
-    if(max===0) return '#f1f5f9';
-    let pct = val/max;
-    if(cluster==0){
-        // hijau ke putih
-        let r = 16 + (255-16)*(1-pct);
-        let g = 185 + (255-185)*(1-pct);
-        let b = 129 + (255-129)*(1-pct);
-        return `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
-    }else{
-        // merah ke putih
-        let r = 239 + (255-239)*(1-pct);
-        let g = 68 + (255-68)*(1-pct);
-        let b = 68 + (255-68)*(1-pct);
-        return `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
-    }
-}
-// ========== MAP ==========
-function initMap(){
-    map = L.map('map').setView([-6.9, 107.6], 8);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 14, attribution: '© OpenStreetMap'
-    }).addTo(map);
-    renderMap();
-}
-function renderMap(){
-    if(!map || !clusterUmum.length) return;
-    mapMarkers.forEach(m=>map.removeLayer(m));
-    mapMarkers = [];
-
-    let selectedWilayah = getSelectedWilayah();
-    let selectedTempat = getSelectedTempatKejadian();
-    let kasusPerWilayah = {};
-    let dataKejadian = clusterKejadian0.concat(clusterKejadian1);
-
-    // Filter data kejadian
-    if(selectedWilayah.length > 0) {
-        dataKejadian = dataKejadian.filter(d => selectedWilayah.includes(d.nama_kabupaten_kota));
-    }
-    if(selectedTempat.length > 0) {
-        dataKejadian = dataKejadian.filter(d => selectedTempat.includes(d.tempat_kejadian));
-    }
-
-    dataKejadian.forEach(d=>{
-        let w = d.nama_kabupaten_kota;
-        kasusPerWilayah[w] = (kasusPerWilayah[w]||0) + parseInt(d.jumlah_kekerasan||0);
-    });
-
-    let showWilayah = clusterUmum.filter(d=>{
-        if(selectedWilayah.length > 0 && !selectedWilayah.includes(d.nama_kabupaten_kota)) return false;
-        if(!(d.nama_kabupaten_kota in kasusPerWilayah)) return false;
-        return true;
-    });
-
-    showWilayah.forEach(d=>{
-        let lat = parseFloat(d.latitude)/1e6, lng = parseFloat(d.longitude)/1e6;
-        let clust = parseInt(d.cluster||0);
-        let color = clusterColors[clust];
-        let totalKasus = kasusPerWilayah[d.nama_kabupaten_kota]||0;
-        let marker = L.circleMarker([lat,lng],{
-            radius: 12 + Math.log10(totalKasus||1)*5,
-            color: '#ffffff',
-            fillColor: color,
-            fillOpacity:0.8,
-            weight:2
-        }).addTo(map);
-
-        // Popup dengan detail filter yang aktif
-        let filterInfo = '';
-        if(selectedTempat.length > 0 && selectedTempat.length <= 3) {
-            filterInfo = `<br>Filter: ${selectedTempat.join(', ')}`;
+        // Render tabel
+        let box = document.getElementById("heatmapTableBox");
+        let titleText = "Heatmap Perbandingan Kasus per Wilayah dan Tempat Kejadian";
+        if (wilayahArr.length > 0 && wilayahArr.length <= 3) {
+          titleText = `Heatmap Kasus di ${wilayahArr.join(", ")}`;
+        }
+        if (tempatKejadianArr.length > 0 && tempatKejadianArr.length <= 3) {
+          titleText = `Heatmap ${tempatKejadianArr.join(", ")}`;
         }
 
-        marker.bindPopup(`<b>${d.nama_kabupaten_kota}</b><br>
-            Cluster: <span style="color:${color}; font-weight:bold">${clust}</span><br>
-            Total Kasus: <b>${totalKasus}</b>${filterInfo}`);
-        mapMarkers.push(marker);
-    });
+        let html = `<div class="heatmap-title">${titleText}</div>`;
 
-    if(showWilayah.length === 1){
-        let d = showWilayah[0];
-        let lat = parseFloat(d.latitude)/1e6, lng = parseFloat(d.longitude)/1e6;
-        map.setView([lat,lng], 10);
-    } else {
-        map.setView([-6.9, 107.6], 8);
-    }
-}
-// ========== INIT: NO DATA ==========
-function showNoData(){
-    ['barTop5','piePersentase','chartTempatKejadian'].forEach(id=>{
-        let ctx = document.getElementById(id).getContext('2d');
-        ctx.clearRect(0,0,ctx.canvas.width, ctx.canvas.height);
-        ctx.font = "18px Plus Jakarta Sans"; 
-        ctx.fillStyle="#64748b"; 
-        ctx.textAlign="center";
-        ctx.fillText("Belum ada data, silakan upload file.", ctx.canvas.width/2, ctx.canvas.height/2);
-    });
-    document.getElementById('heatmapTableBox').innerHTML = '<div class="no-data">Belum ada data, silakan upload file.</div>';
-}
-showNoData();
-</script>
-</body>
+        // Header tabel
+        html += '<table class="heatmap"><tr><th>Wilayah</th>';
+        tempatKejadianArr.forEach((t) => {
+          html += `<th>${t
+            .split(" ")
+            .map((w) => w.charAt(0) + w.slice(1).toLowerCase())
+            .join(" ")}</th>`;
+        });
+        html += "</tr>";
+
+        // Baris data
+        wilayahArr.forEach((w) => {
+          let cval = clusterPerWilayah[w] || 0;
+          html += `<tr><th style="text-align:left"><span class="cluster-dot c${cval}"></span>${w}</th>`;
+          tempatKejadianArr.forEach((t) => {
+            let val = matrix[w][t];
+            html += `<td style="background:${heatColor(val, vmax, cval)};color:${val > vmax * 0.6 ? "#fff" : "#111"}">${val}</td>`;
+          });
+          html += "</tr>";
+        });
+
+        html += "</table>";
+        box.innerHTML = html;
+      }
+      // Pewarnaan heatmap: cluster 0 hijau, cluster 1 merah, intensitas sesuai jumlah kasus
+      function heatColor(val, max, cluster) {
+        if (max === 0) return "#f1f5f9";
+        let pct = val / max;
+        if (cluster == 0) {
+          // hijau ke putih
+          let r = 16 + (255 - 16) * (1 - pct);
+          let g = 185 + (255 - 185) * (1 - pct);
+          let b = 129 + (255 - 129) * (1 - pct);
+          return `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
+        } else {
+          // merah ke putih
+          let r = 239 + (255 - 239) * (1 - pct);
+          let g = 68 + (255 - 68) * (1 - pct);
+          let b = 68 + (255 - 68) * (1 - pct);
+          return `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
+        }
+      }
+
+      // ========== MAP ==========
+      function initMap() {
+        map = L.map("map").setView([-6.9, 107.6], 8);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 14,
+          attribution: "© OpenStreetMap",
+        }).addTo(map);
+        renderMap();
+      }
+      function renderMap() {
+        if (!map) return;
+        mapMarkers.forEach((m) => map.removeLayer(m));
+        mapMarkers = [];
+
+        let data = getFilteredDataForVisual();
+
+        // Agregasi kasus per wilayah
+        let kasusPerWilayah = {};
+        let clusterPerWilayah = {};
+        let latlngPerWilayah = {};
+        data.forEach((d) => {
+          let w = d.nama_kabupaten_kota;
+          kasusPerWilayah[w] = (kasusPerWilayah[w] || 0) + parseInt(d.jumlah_kekerasan || 0);
+          // Simpan cluster dan lat/lng dari baris pertama wilayah tsb
+          if (clusterPerWilayah[w] === undefined && d.cluster !== undefined) {
+            clusterPerWilayah[w] = parseInt(d.cluster);
+            latlngPerWilayah[w] = { lat: parseFloat(d.latitude) / 1e6, lng: parseFloat(d.longitude) / 1e6 };
+          }
+        });
+
+        let showWilayah = Object.keys(kasusPerWilayah);
+
+        showWilayah.forEach((w) => {
+          let clust = clusterPerWilayah[w] || 0;
+          let color = clust === 1 ? "#ef4444" : "#10b981";
+          let totalKasus = kasusPerWilayah[w] || 0;
+          let latlng = latlngPerWilayah[w] || { lat: -6.9, lng: 107.6 };
+          let zona = clust === 1 ? "Zona Merah" : "Zona Hijau";
+          let marker = L.circleMarker([latlng.lat, latlng.lng], {
+            radius: 12 + Math.log10(totalKasus || 1) * 5,
+            color: "#ffffff",
+            fillColor: color,
+            fillOpacity: 0.8,
+            weight: 2,
+          }).addTo(map);
+
+          marker.bindPopup(`<b>${w}</b><br>
+            Cluster: <span style="color:${color}; font-weight:bold">${zona}</span><br>
+            Total Kasus: <b>${totalKasus}</b>`);
+          mapMarkers.push(marker);
+        });
+
+        // Center map
+        if (showWilayah.length === 1) {
+          let w = showWilayah[0];
+          let latlng = latlngPerWilayah[w] || { lat: -6.9, lng: 107.6 };
+          map.setView([latlng.lat, latlng.lng], 10);
+        } else {
+          map.setView([-6.9, 107.6], 8);
+        }
+      }
+      // ========== INIT: NO DATA ==========
+      function showNoData() {
+        ["barTop5", "piePersentase", "chartTempatKejadian"].forEach((id) => {
+          let ctx = document.getElementById(id).getContext("2d");
+          ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+          ctx.font = "18px Plus Jakarta Sans";
+          ctx.fillStyle = "#64748b";
+          ctx.textAlign = "center";
+          ctx.fillText("Belum ada data, silakan upload file.", ctx.canvas.width / 2, ctx.canvas.height / 2);
+        });
+        document.getElementById("heatmapTableBox").innerHTML = '<div class="no-data">Belum ada data, silakan upload file.</div>';
+      }
+      showNoData();
+    </script>
+  </body>
 </html>
